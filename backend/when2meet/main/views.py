@@ -56,7 +56,8 @@ class EventView(APIView, LimitOffsetPagination):
             serializer = EventSerializer(data=request.data, context={'request': request})
             if serializer.is_valid():
                 time = request.data["time"]
-                if not validate(time):
+                posibble_time = request.data["possible_time"]
+                if not validate(time) or validate(posibble_time):
                     print("bad time")
                     return Response(status=status.HTTP_400_BAD_REQUEST)
 
@@ -67,7 +68,8 @@ class EventView(APIView, LimitOffsetPagination):
             serializer = EventSerializer(data=request.data, context={'request': request})
             if serializer.is_valid():
                 time = request.data["time"]
-                if not validate(time):
+                posibble_time = request.data["possible_time"]
+                if not validate(time) or validate(posibble_time):
                     print("bad time")
                     return Response(status=status.HTTP_400_BAD_REQUEST)
 
