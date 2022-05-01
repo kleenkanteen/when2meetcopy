@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <title>When2meet</title>
+        <meta name="description" content="Meeting time finder" />
+
+        <meta property="og:title" content="When2meet" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="when2meet.ca" />
+        <meta
+            property="og:description"
+            content="Meeting time finder."
+        />
+
+        <link rel="icon" href="../images/userplus.png" type="image/png" />
+
+        <link rel="stylesheet" href="./styles.css">
+        <script defer src="https://unpkg.com/alpinejs@3.10.2/dist/cdn.min.js"></script>
+    </head>
+    <style>
+        .container {
+            margin-top: 20%;
+            width: 70%;
+            margin: auto;
+            justify-content: center;
+        }
+
+        button {
+            background-color: orange;
+            margin: 5px;
+            padding: 5px;
+        }
+
+    </style>
+
+<body>
+    <div class="container flex items-center">
+        <div class="day flex items-center flex-col" x-data="{ count: 0 }">
+            <button x-on:click="count++">11:00</button>
+            <button>12:00</button>
+            <button>13:00</button>
+            <button>14:00</button>
+            <button>15:00</button>
+            <button>16:00</button>
+            <button>17:00</button>
+            <button>18:00</button>
+            <button>19:00</button>
+            <span x-text="count"></span>
+        </div>
+        <div class="day flex items-center flex-col">
+            <button>11:00</button>
+            <button>12:00</button>
+            <button>13:00</button>
+            <button>14:00</button>
+            <button>15:00</button>
+            <button>16:00</button>
+            <button>17:00</button>
+            <button>18:00</button>
+            <button>19:00</button>
+        </div>
+        <div class="day flex items-center flex-col">
+            <button>11:00</button>
+            <button>12:00</button>
+            <button>13:00</button>
+            <button>14:00</button>
+            <button>15:00</button>
+            <button>16:00</button>
+            <button>17:00</button>
+            <button>18:00</button>
+            <button>19:00</button>
+        </div>
+    </div>
+</body>
+
+</html>
