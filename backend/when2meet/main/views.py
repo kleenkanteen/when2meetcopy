@@ -84,7 +84,7 @@ class AvailableView(APIView, LimitOffsetPagination):
             return Response(status=status.HTTP_404_NOT_FOUND)
         event = event[0]
         times = Available.objects.all(event=event)
-        results = self.paginate_queryset(events, request, view=self)
+        results = self.paginate_queryset(times, request, view=self)
         serializer = AvailableSerializer(results, many=True)
         return self.get_paginated_response(serializer.data)
 
