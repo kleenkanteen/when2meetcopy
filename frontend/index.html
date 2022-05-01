@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <title>When2meet</title>
+        <meta name="description" content="Meeting time finder" />
+
+        <meta property="og:title" content="When2meet" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="when2meet.ca" />
+        <meta
+            property="og:description"
+            content="Meeting time finder."
+        />
+
+        <link rel="icon" href="../images/userplus.png" type="image/png" />
+
+        <link rel="stylesheet" href="./styles.css">
+        <script defer src="https://unpkg.com/alpinejs@3.10.2/dist/cdn.min.js"></script>
+    </head>
+
+<body>
+    <div class="flex items-center flex-col">
+            <form x-data="{name: ''}" class="max-w-sm my-10 w-60 text-xl" >
+                <div class="flex items-center border-b border-red-900 py-2">
+                  <input x-model="name" class="appearance-none bg-transparent border-none w-full text-black-700 mr-3 py-1 px-2 leading-tight focus:outline-none" type="text" placeholder="Event name" aria-label="Event name">
+                </div>
+            </form>
+            <div class="flex-col items-center justify-center bg-red-500 text-white w-1/2" 
+            x-data="
+                {start: '9am',
+                end: '5pm',
+                todos: {
+                9: { id: 9, text: '9am'},
+                10: { id: 1, text: '10am'},
+                11: { id: 11, text: '11am'},
+                12: { id: 12, text: '12pm'},
+                13: { id: 13, text: '1pm'},
+                14: { id: 14, text: '2pm'},
+                15: { id: 15, text: '3pm'},
+                16: { id: 16, text: '4pm'},
+                17: { id: 17, text: '5pm'},
+                18: { id: 18, text: '6pm'},
+                19: { id: 19, text: '7pm'},
+                20: { id: 20, text: '8pm'},
+                21: { id: 21, text: '9pm'},
+                22: { id: 22, text: '10pm'},
+                23: { id: 23, text: '11pm'},
+                24: { id: 24, text: '12am'},    
+                1: { id: 1, text: '1am'},
+                2: { id: 2, text: '2am'},
+                3: { id: 3, text: '3am'},
+                4: { id: 4, text: '4am'},
+                5: { id: 5, text: '5am'},
+                6: { id: 6, text: '6am'},
+                7: { id: 7, text: '7am'},
+                8: { id: 8, text: '8am'}
+                }}">
+                <div class="flex items-center justify-center m-3">
+                    <b class="text-xl mt-1">Start time: &nbsp</b>
+                    <div x-data="{dropdownMenu: false
+                                }"
+                                  class="relative">
+                        <!-- Dropdown toggle button -->
+                        <button @click="dropdownMenu = ! dropdownMenu" class="z-50 flex items-center p-2 bg-amber-500 rounded-md">
+                            <span x-text="start + ' ▼'" class="mr-4"></span>
+                        </button>
+                        <!-- Dropdown list -->
+                        <div x-show="dropdownMenu" class="z-50 absolute right-0 py-2 mt-2 bg-amber-500 rounded-md shadow-xl w-44">
+                                <template x-for="id in Object.keys(todos)" :key="id">
+                                  <option @click="dropdownMenu = ! dropdownMenu; start = todos[id].text" :value="todos[id].id" x-text="todos[id].text"
+                                  class="z-50 block px-2 py-1 hover:bg-amber-600 dark:hover:bg-amber-600 cursor-pointer"></option>
+                                </template>
+                            <!-- <a x-for="id in Object.keys(todos)" class="block px-4 py-2 text-sm text-gray-300 text-gray-700 hover:bg-gray-400 hover:text-white">
+                                <a :value="id" x-text="todos[id].text"></a>
+                            </a> -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-center m-3 ">
+                    <b class="text-xl mt-1">End time: &nbsp</b>
+                    <div x-data="{dropdownMenu: false
+                                }"
+                                  class="relative">
+                        <!-- Dropdown toggle button -->
+                        <button @click="dropdownMenu = ! dropdownMenu" class="z-3 flex items-center p-2 bg-amber-500 rounded-md">
+                            <span x-text="start + ' ▼'" class="mr-4"></span>
+                        </button>
+                        <!-- Dropdown list -->
+                        <div x-show="dropdownMenu" class="z-10 absolute right-0 py-2 mt-2 bg-amber-500 rounded-md shadow-xl w-44">
+                                <template x-for="id in Object.keys(todos)" :key="id">
+                                  <option @click="dropdownMenu = ! dropdownMenu; end = todos[id].text" :value="todos[id].id" x-text="todos[id].text"
+                                  class="z-10 block px-2 py-1 hover:bg-amber-600 dark:hover:bg-amber-600 cursor-pointer"></option>
+                                </template>
+                            <!-- <a x-for="id in Object.keys(todos)" class="block px-4 py-2 text-sm text-gray-300 text-gray-700 hover:bg-gray-400 hover:text-white">
+                                <a :value="id" x-text="todos[id].text"></a>
+                            </a> -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-center m-3 ">
+                    <b class="text-xl mt-1">Select your weekdays: </b>
+                </div>
+            </div>
+
+    </div>
+</body>
+
+</html>

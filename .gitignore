@@ -1,0 +1,4 @@
+backend/env
+backend/when2meet/db.sqlite3
+*__pycache__*
+node_modules
