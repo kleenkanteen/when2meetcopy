@@ -20,11 +20,83 @@
 
         <link rel="stylesheet" href="./styles.css">
         <script defer src="https://unpkg.com/alpinejs@3.10.2/dist/cdn.min.js"></script>
+        <script>
+            function createEvent(name, days, start, end) {
+                // if start ends with am, strip the am
+                if (start.endsWith("am")) {
+                    start = start.substring(0, start.length - 2);
+                    // if start is 1 character long, add 0
+                    if (start.length == 1) {
+                        start = "0" + start;
+                    }
+                }
+                // if start ends with pm, strip the pm
+                if (start.endsWith("pm")) {
+                    start = start.substring(0, start.length - 2);
+                    // turn start into a number
+                    start = parseInt(start);
+                    // add 12 to start, unless it is 24, then make it 0
+                    if (start != 12) {
+                        start += 12;
+                    } else {
+                        start = 0;
+                    }
+                    // make start a string again
+                    start = start.toString();
+                }
+                // if end ends with am, strip the am
+                if (end.endsWith("am")) {
+                    end = end.substring(0, end.length - 2);
+                    // if end is 1 character long, add 0
+                    if (end.length == 1) {
+                        end = "0" + end;
+                    }
+                }
+                // if end ends with pm, strip the pm
+                if (end.endsWith("pm")) {
+                    end = end.substring(0, end.length - 2);
+                    // turn end into a number
+                    end = parseInt(end);
+                    // add 12 to end, unless it is 24, then make it 0
+                    if (end != 12) {
+                        end += 12;
+                    } else {
+                        end = 0;
+                    }
+                    // make end a string again
+                    end = end.toString();
+                }
+                // loop over days object, and if value is true, do a fetch request
+                // and format name as ^[a-zA-Z0-9]+:\d\d:\d\d-\d\d:\d\d$. starts with key of days object, then :, then 2 digits for start hour, :, then 2 0's, -, 2 digits for end hour, :, then 2 0's
+                // then add to string
+                
+                let eventTime = "";
+                for (let day in days) {
+                    eventTime = "";
+                    if (days[day]) {
+                        eventTime = day + ":" + start + ":00" + "-" + end + ":00";
+
+                        fetch(`http://127.0.0.1:8000/events/`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            username: 'bob',
+                            name: name,
+                            time: eventTime,
+                            possible_time: eventTime
+                        })
+                    }).then(res => console.log(res.status));
+                    }
+                }
+            };
+        </script>
     </head>
 
 <body>
-    <div class="flex items-center flex-col">
-            <form x-data="{name: ''}" class="max-w-sm my-10 w-60 text-xl" >
+    <div class="flex items-center flex-col" x-data="{name: 'bob'}">
+            <form class="max-w-sm my-10 w-60 text-xl" >
                 <div class="flex items-center border-b border-red-900 py-1">
                   <input x-model="name" class="appearance-none bg-transparent border-none w-full text-black-700 mr-3 py-1 px-2 leading-tight focus:outline-none" type="text" placeholder="Event name" aria-label="Event name">
                 </div>
@@ -49,7 +121,7 @@
                 21: { id: 21, text: '9pm'},
                 22: { id: 22, text: '10pm'},
                 23: { id: 23, text: '11pm'},
-                24: { id: 24, text: '12am'},    
+                0: { id: 24, text: '12am'},    
                 1: { id: 1, text: '1am'},
                 2: { id: 2, text: '2am'},
                 3: { id: 3, text: '3am'},
@@ -60,7 +132,14 @@
                 8: { id: 8, text: '8am'}
                 },
                 days: {
-                0: { id: 0, text: 'Sunday'}}
+                SUN: false,
+                MON: false,
+                TUE: false,
+                WED: false,
+                THU: false,
+                FRI: false,
+                SAT: false
+                },
             }">
                 <div class="flex items-center justify-center m-3">
                     <b class="text-xl mt-1 text-blue-500">Start time: &nbsp</b>
@@ -68,7 +147,7 @@
                                 }"
                                   class="relative">
                         <!-- Dropdown toggle button -->
-                        <button @click="dropdownMenu = ! dropdownMenu" class="z-50 flex items-center p-2 bg-amber-500 rounded-md">
+                        <button @click="dropdownMenu = ! dropdownMenu" class="z-50 flex items-center p-2 bg-amber-200 rounded-md">
                             <span x-text="start + ' ▼'" class="mr-4 text-blue-500"></span>
                         </button>
                         <!-- Dropdown list -->
@@ -91,11 +170,11 @@
                                 }"
                                   class="relative">
                         <!-- Dropdown toggle button -->
-                        <button @click="dropdownMenu = ! dropdownMenu" class="z-3 flex items-center p-2 bg-amber-500 text-blue-500 rounded-md">
+                        <button @click="dropdownMenu = ! dropdownMenu" class="z-3 flex items-center p-2 bg-amber-200 text-blue-500 rounded-md">
                             <span x-text="end + ' ▼'" class="mr-4"></span>
                         </button>
                         <!-- Dropdown list -->
-                        <div x-show="dropdownMenu" class="z-10 absolute right-0 py-2 mt-2 bg-amber-500 rounded-md shadow-xl w-44">
+                        <div x-show="dropdownMenu" class="z-10 absolute right-0 py-2 mt-2 bg-amber-200 rounded-md shadow-xl w-44">
                                 <template x-for="id in Object.keys(todos)" :key="id">
                                   <option @click="dropdownMenu = ! dropdownMenu; end = todos[id].text" @click.away="dropdownMenu = false"
                                   :value="todos[id].id" x-text="todos[id].text"
@@ -109,19 +188,19 @@
                 </div>
 
                 <div class="flex items-center justify-center m-3">
-                    <b class="text-xl mt-1 text-blue-500">Select your weekdays: </b>
+                    <b class="text-xl m-3 text-blue-500">Select your weekdays: </b>
                 </div>
                 <div class="flex items-center justify-center m-3">
-                    <button type="button" class="date-btn">Sun</button>
-                    <button type="button" class="date-btn">Mon</button>
-                    <button type="button" class="date-btn">Tues</button>
-                    <button type="button" class="date-btn">Wed</button>
-                    <button type="button" class="date-btn">Thurs</button>
-                    <button type="button" class="date-btn">Fri</button>
-                    <button type="button" class="date-btn">Sat</button>
+                    <button type="button" class="date-btn" @click="days[$el.textContent] = !days[$el.textContent]" :class="{'bg-blue-800' : days[$el.textContent]}">SUN</button>
+                    <button type="button" class="date-btn" @click="days[$el.textContent] = !days[$el.textContent]" :class="{'bg-blue-800' : days[$el.textContent]}">MON</button>
+                    <button type="button" class="date-btn" @click="days[$el.textContent] = !days[$el.textContent]" :class="{'bg-blue-800' : days[$el.textContent]}">TUES</button>
+                    <button type="button" class="date-btn" @click="days[$el.textContent] = !days[$el.textContent]" :class="{'bg-blue-800' : days[$el.textContent]}">WED</button>
+                    <button type="button" class="date-btn" @click="days[$el.textContent] = !days[$el.textContent]" :class="{'bg-blue-800' : days[$el.textContent]}">THURS</button>
+                    <button type="button" class="date-btn" @click="days[$el.textContent] = !days[$el.textContent]" :class="{'bg-blue-800' : days[$el.textContent]}">FRI</button>
+                    <button type="button" class="date-btn" @click="days[$el.textContent] = !days[$el.textContent]" :class="{'bg-blue-800' : days[$el.textContent]}">SAT</button>
                 </div>
-                <div class="flex items-center justify-center m-3">
-                    <button type="button" class="date-btn hover:bg-green-800 bg-green-700 drop-shadow-xl">Submit</button>
+                <div x-data="createEvent()" class="flex items-center justify-center m-3">
+                    <button @click="createEvent(name, days, start, end)" type="button" class="date-btn hover:bg-green-800 bg-green-700 drop-shadow-xl">Submit</button>
                 </div>
             </div>
 

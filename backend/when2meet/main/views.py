@@ -11,7 +11,8 @@ from rest_framework.pagination import LimitOffsetPagination
 
 from .models import User, Event, Available
 from .serializers import UserSerialiazer, EventSerializer, AvailableSerializer
-from .times import validate, calculateTime
+from .times import calculateTime
+# no import validate
 
 # Create your views here.
 
@@ -48,8 +49,8 @@ class EventView(APIView, LimitOffsetPagination):
 
     def post(self, request, format=None):
         user = request.user
-        if(not user.id and "username" not in request.data):
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        # if(not user.id and "username" not in request.data):
+        #     return Response(status=status.HTTP_400_BAD_REQUEST)
         if(user.id):
             user = User.objects.get(id=user.id)
 
@@ -57,9 +58,9 @@ class EventView(APIView, LimitOffsetPagination):
             if serializer.is_valid():
                 time = request.data["time"]
                 posibble_time = request.data["possible_time"]
-                if not validate(time) or validate(posibble_time):
-                    print("bad time")
-                    return Response(status=status.HTTP_400_BAD_REQUEST)
+                # if not validate(time) or validate(posibble_time):
+                #     print("bad time")
+                #     return Response(status=status.HTTP_400_BAD_REQUEST)
 
                 serializer.save(owner=user)
                 return Response(data=serializer.data, status=status.HTTP_201_CREATED)
@@ -69,47 +70,55 @@ class EventView(APIView, LimitOffsetPagination):
             if serializer.is_valid():
                 time = request.data["time"]
                 posibble_time = request.data["possible_time"]
-                if not validate(time) or validate(posibble_time):
-                    print("bad time")
-                    return Response(status=status.HTTP_400_BAD_REQUEST)
+                # if not validate(time) or validate(posibble_time):
+                #     print("bad time")
+                #     return Response(status=status.HTTP_400_BAD_REQUEST)
 
                 serializer.save(anonowner=request.data["username"])
                 return Response(data=serializer.data, status=status.HTTP_201_CREATED)
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class FirstEventView(APIView):
+    def post(self, request, format=None):
+        event = Event.objects.filter(id=request.data["id"])
+        if not event:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = EventSerializer(event, many=True)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
 class AvailableView(APIView, LimitOffsetPagination):
     def get(self, request, format=None):
-        if("event_id" not in request.GET):
+        if("id" not in request.GET):
             return Response(status=status.HTTP_400_BAD_REQUEST)
-        event = Event.objects.filter(id=request.GET["event_id"])
+        event = Event.objects.filter(id=request.data["id"])
         if not event:
             return Response(status=status.HTTP_404_NOT_FOUND)
         event = event[0]
         times = Available.objects.all(event=event)
-        results = self.paginate_queryset(times, request, view=self)
-        serializer = AvailableSerializer(results, many=True)
-        return self.get_paginated_response(serializer.data)
+        # results = self.paginate_queryset(times, request, view=self)
+        serializer = AvailableSerializer(times, many=True)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+        # return self.get_paginated_response(serializer.data)
 
     def post(self, request, format=None):
         user = request.user
-        if("event_id" not in request.data):
+        if("id" not in request.data):
             return Response(status=status.HTTP_400_BAD_REQUEST)
         if(not user.id and "username" not in request.data):
             return Response(status=status.HTTP_400_BAD_REQUEST)
         if(user.id):
             user = User.objects.get(id=user.id)
-
-            event = Event.objects.filter(id=request.data["event_id"])
+            
+            event = Event.objects.filter(id=request.data["id"])
             if not event:
                 return Response(status=status.HTTP_404_NOT_FOUND)
             event = event[0]
-    
+
             serializer = AvailableSerializer(data=request.data, context={'request': request})
             if serializer.is_valid():
                 time = request.data["time"]
-                if not validate(time):
-                    print("bad time")
-                    return Response(status=status.HTTP_400_BAD_REQUEST)
+                # if not validate(time):
+                #     print("bad time")
+                #     return Response(status=status.HTTP_400_BAD_REQUEST)
 
                 serializer.save(user=user, event=event)
                 times = []
@@ -130,9 +139,9 @@ class AvailableView(APIView, LimitOffsetPagination):
             serializer = AvailableSerializer(data=request.data, context={'request': request})
             if serializer.is_valid():
                 time = request.data["time"]
-                if not validate(time):
-                    print("bad time")
-                    return Response(status=status.HTTP_400_BAD_REQUEST)
+                # if not validate(time):
+                #     print("bad time")
+                #     return Response(status=status.HTTP_400_BAD_REQUEST)
 
                 serializer.save(anonuser=request.data["username"], event=event)
                 times = []
@@ -148,9 +157,9 @@ class AvailableView(APIView, LimitOffsetPagination):
 
 class AttendeeViews(APIView, LimitOffsetPagination):
     def get(self, request, format=None):
-        if ("event_id" not in request.GET):
+        if ("id" not in request.GET):
             return Response(status=status.HTTP_400_BAD_REQUEST)
-        event = Event.objects.filter(id=request.GET["event_id"])
+        event = Event.objects.filter(id=request.GET["id"])
         if not event:
             return Response(status=status.HTTP_404_NOT_FOUND)
         event = event[0]

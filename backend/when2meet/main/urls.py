@@ -13,6 +13,7 @@ from rest_framework_simplejwt.views import (
 urlpatterns = [
     path('users/', views.UserView.as_view(), name="users"),
     path('events/', views.EventView.as_view(), name="events"),
+    path('single/', views.FirstEventView.as_view(), name="single"),
     path('available/', views.AvailableView.as_view(), name="available"),
     path('attendees/', views.AvailableView.as_view(), name="attendees"),
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
